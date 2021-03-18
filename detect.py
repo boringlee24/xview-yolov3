@@ -13,12 +13,12 @@ parser = argparse.ArgumentParser()
 if platform == 'darwin':  # macos
     parser.add_argument('-image_folder', type=str, default='/Users/glennjocher/Downloads/DATA/xview/train_images/5.tif')
     parser.add_argument('-output_folder', type=str, default='./output_xview', help='path to outputs')
-    cuda = False  # torch.cuda.is_available()
+    cuda = True  # torch.cuda.is_available()
 else:  # gcp
     # cd yolo && python3 detect.py -secondary_classifier 1
     parser.add_argument('-image_folder', type=str, default='../train_images/5.tif', help='path to images')
     parser.add_argument('-output_folder', type=str, default='../output', help='path to outputs')
-    cuda = False
+    cuda = True
 
 parser.add_argument('-plot_flag', type=bool, default=True)
 parser.add_argument('-secondary_classifier', type=bool, default=False)

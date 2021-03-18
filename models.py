@@ -3,7 +3,7 @@ from collections import defaultdict
 import torch.nn as nn
 
 from utils.utils import *
-
+import pdb
 
 def create_modules(module_defs):
     """
@@ -245,9 +245,9 @@ class Darknet(nn.Module):
             ui = np.unique(self.losses['TC'])[1:]
             for i in ui:
                 j = self.losses['TC'] == float(i)
-                metrics[0, i] = (self.losses['TP'][j] > 0).sum().float()  # TP
-                metrics[1, i] = (self.losses['FP'][j] > 0).sum().float()  # FP
-                metrics[2, i] = (self.losses['FN'][j] == 3).sum().float()  # FN
+                metrics[0, int(i)] = (self.losses['TP'][j] > 0).sum().float()  # TP
+                metrics[1, int(i)] = (self.losses['FP'][j] > 0).sum().float()  # FP
+                metrics[2, int(i)] = (self.losses['FN'][j] == 3).sum().float()  # FN
             metrics[3] = metrics.sum(0)
             metrics[1] += self.losses['FPe']
 

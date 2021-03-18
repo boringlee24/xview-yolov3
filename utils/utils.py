@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import torch
 import torch.nn.functional as F
+import pdb
 
 # set printoptions
 torch.set_printoptions(linewidth=1320, precision=5, profile='long')
@@ -166,11 +167,11 @@ def build_targets(pred_boxes, pred_conf, pred_cls, target, anchor_wh, nA, nC, nG
     ty = torch.zeros(nB, nA, nG, nG)
     tw = torch.zeros(nB, nA, nG, nG)
     th = torch.zeros(nB, nA, nG, nG)
-    tconf = torch.ByteTensor(nB, nA, nG, nG).fill_(0)
+    tconf = torch.BoolTensor(nB, nA, nG, nG).fill_(False)
     tcls = torch.ByteTensor(nB, nA, nG, nG, nC).fill_(0)  # nC = number of classes
-    TP = torch.ByteTensor(nB, max(nT)).fill_(0)
-    FP = torch.ByteTensor(nB, max(nT)).fill_(0)
-    FN = torch.ByteTensor(nB, max(nT)).fill_(0)
+    TP = torch.BoolTensor(nB, max(nT)).fill_(False)
+    FP = torch.BoolTensor(nB, max(nT)).fill_(False)
+    FN = torch.BoolTensor(nB, max(nT)).fill_(False)
     TC = torch.ShortTensor(nB, max(nT)).fill_(-1)  # target category
 
     for b in range(nB):
@@ -229,7 +230,7 @@ def build_targets(pred_boxes, pred_conf, pred_cls, target, anchor_wh, nA, nC, nG
 
         # One-hot encoding of label
         tcls[b, a, gj, gi, tc] = 1
-        tconf[b, a, gj, gi] = 1
+        tconf[b, a, gj, gi] = True
 
         if requestPrecision:
             # predicted classes and confidence
@@ -238,9 +239,9 @@ def build_targets(pred_boxes, pred_conf, pred_cls, target, anchor_wh, nA, nC, nG
             pconf = torch.sigmoid(pred_conf[b, a, gj, gi]).cpu()
             iou_pred = bbox_iou(tb, pred_boxes[b, a, gj, gi].cpu())
 
-            TP[b, i] = (pconf > 0.99) & (iou_pred > 0.5) & (pcls == tc)
-            FP[b, i] = (pconf > 0.99) & (TP[b, i] == 0)  # coordinates or class are wrong
-            FN[b, i] = pconf <= 0.99  # confidence score is too low (set to zero)
+            TP[b, i] = ((pconf > 0.99) & (iou_pred > 0.5) & (pcls == tc))#.type(torch.uint8)
+            FP[b, i] = ((pconf > 0.99) & (TP[b, i] == 0))#.type(torch.uint8)  # coordinates or class are wrong
+            FN[b, i] = (pconf <= 0.99)#.type(torch.uint8)  # confidence score is too low (set to zero)
 
     return tx, ty, tw, th, tconf, tcls, TP, FP, FN, TC
 
