@@ -1,11 +1,15 @@
 import argparse
 import time
 from sys import platform
+import os
+import sys
+sys.path.append('../')
 
 from models import *
 from utils.datasets import *
 from utils.utils import *
 import json
+os.chdir('../')
 
 targets_path = 'utils/targets_c60.mat'
 
@@ -27,8 +31,9 @@ parser.add_argument('-cfg', type=str, default='cfg/c60_a30symmetric.cfg', help='
 parser.add_argument('-class_path', type=str, default='data/xview.names', help='path to class label file')
 parser.add_argument('-conf_thres', type=float, default=0.99, help='object confidence threshold')
 parser.add_argument('-nms_thres', type=float, default=0.4, help='iou threshold for non-maximum suppression')
-parser.add_argument('-batch_size', type=int, default=3, help='size of the batches')
+parser.add_argument('-batch_size', type=int, default=2, help='size of the batches')
 parser.add_argument('-img_size', type=int, default=32 * 51, help='size of each image dimension')
+parser.add_argument('-tc', type=str, default='none', help='testcase of hardware')
 
 opt = parser.parse_args()
 print(opt)
@@ -165,7 +170,7 @@ def detect(opt):
         lat_list.append(round((t_end - t_start)*1000,3)) # in ms
         print(f'item {batch_i} done')
 
-    with open('lat_list.json', 'w') as f:
+    with open(f'experiments/logs/lat_list_{opt.tc}.json', 'w') as f:
         json.dump(lat_list, f, indent=4)
 
     # Bounding-box colors
