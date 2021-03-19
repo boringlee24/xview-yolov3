@@ -1,0 +1,8 @@
+{
+    "hardware": ["P100", "T4"],
+    "throughput_qps": [7.3, 6.7],
+    "latency_ms": [137, 150],
+    "power_W": [133, 92],
+    "target_qps": 200,
+    "target_lat": 145
+}
