@@ -21,7 +21,7 @@ if platform == 'darwin':  # macos
     cuda = True  # torch.cuda.is_available()
 else:  # gcp
     # cd yolo && python3 detect.py -secondary_classifier 1
-    parser.add_argument('-image_folder', type=str, default='/scratch/li.baol/xview_dataset/val_images/', help='path to images')
+    parser.add_argument('-image_folder', type=str, default='/home/gridsan/baolinli/GIT/xview_dataset/val_images/', help='path to images')
     parser.add_argument('-output_folder', type=str, default='../output', help='path to outputs')
     cuda = True
 
