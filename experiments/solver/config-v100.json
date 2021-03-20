@@ -1,8 +1,8 @@
 {
-    "hardware": ["V100"],
-    "throughput_qps": [0.95],
-    "latency_ms": [1057],
-    "power_W": [204],
+    "hardware": ["P100"],
+    "throughput_qps": [0.66],
+    "latency_ms": [1517],
+    "power_W": [185],
     "target_qps": 20,
-    "target_lat": 1500
+    "target_lat": 1800
 }
