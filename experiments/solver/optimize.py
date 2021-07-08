@@ -3,7 +3,7 @@ import json
 import pdb
 import numpy as np
 
-with open('config.json') as f:
+with open('config-all.json') as f:
     inputs = json.load(f)
 
 throughput = [-x for x in inputs['throughput_qps']]

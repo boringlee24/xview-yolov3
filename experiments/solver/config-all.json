@@ -4,5 +4,5 @@
     "latency_ms": [21640, 1915, 1517, 1057],
     "power_W": [50, 71, 185, 204],
     "target_qps": 20,
-    "target_lat": 1500
+    "target_lat": 1800
 }
