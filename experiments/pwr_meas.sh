@@ -4,11 +4,11 @@
 GPU="0"
 TYPE=$1
 DATA_PATH="logs"
-RUNTIME=180
-mkdir -p $DATA_PATH
+RUNTIME=60
+mkdir -p ${DATA_PATH}/mig_config_${TYPE}
 
-sleep 30 
-timeout ${RUNTIME} nvidia-smi -i ${GPU} --query-gpu=index,timestamp,power.draw,memory.used,utilization.memory,utilization.gpu,temperature.gpu --format=csv,nounits -lms 50 --filename=${DATA_PATH}/${TYPE}.csv 
+sleep 30
+timeout ${RUNTIME} nvidia-smi -i ${GPU} --query-gpu=index,timestamp,power.draw,memory.used,utilization.memory,utilization.gpu,temperature.gpu --format=csv,nounits -lms 50 --filename=${DATA_PATH}/mig_config_${TYPE}/power.csv 
 
 #sleep 305 && python gpu_pwr.py $JOB
 

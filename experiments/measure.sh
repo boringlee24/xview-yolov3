@@ -3,5 +3,5 @@
 
 TYPE=$1
 
-./pwr_meas.sh ${TYPE} & python detect.py -tc ${TYPE}
+./pwr_meas.sh ${TYPE} & python launch_parallel_detections.py --mig_config ${TYPE}
 

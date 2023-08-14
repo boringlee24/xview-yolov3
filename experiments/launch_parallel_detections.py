@@ -27,14 +27,14 @@ def launch(mig_config: str):
         device_json = json.load(f)
 
     Path('/scratch/li.baol/xview_logs').mkdir(parents=True, exist_ok=True)
-    Path(f'experiments/logs/lat_list_{mig_config}/').mkdir(parents=True, exist_ok=True)
+    Path(f'logs/mig_config_{mig_config}/').mkdir(parents=True, exist_ok=True)
     mig_list = device_json[hostname][f'gpu0'][mig_config]
     procs = []
     for i in range(num_slices):
         device = mig_list[i]
         cmd = f'CUDA_VISIBLE_DEVICES={device} python detect.py \
                 --epochs {args.epochs} --batch_size {args.batch_size} \
-                --tc {mig_config}/mig_{i}' 
+                --tc mig_config_{mig_config}/mig_{i}' 
         print(cmd)
         out_file = f'/scratch/li.baol/xview_logs/yolo{i}.out'
         err_file = f'/scratch/li.baol/xview_logs/yolo{i}.err'
@@ -51,7 +51,7 @@ def parse():
     # parser.add_argument('--gpuid', type=int, default=0, help='GPU ID (0 or 1)')  
     # parser.add_argument('--weights', type=str, default='yolov5x6', help='model name: yolov5s, yolov5x, yolov5x6')
     # parser.add_argument('--term', action='store_true', help='terminate services', default=False)        
-    parser.add_argument('--epochs', type=int, default=10, help='number of epochs')
+    parser.add_argument('--epochs', type=int, default=3, help='number of epochs')
     parser.add_argument('--batch_size', type=int, default=1, help='size of the batches')
     parser.add_argument('--mig_config', type=str, default="0", help='testcase')
     args = parser.parse_args()

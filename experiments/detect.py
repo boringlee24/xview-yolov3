@@ -113,7 +113,7 @@ def detect(opt):
             lat_list.append(round((t_end - t_start)*1000,3)) # in ms
             print(f'item {batch_i} done')
 
-    with open(f'experiments/logs/lat_list_{opt.tc}.json', 'w') as f:
+    with open(f'experiments/logs/{opt.tc}.json', 'w') as f:
         json.dump(lat_list, f, indent=4)
 
     # Bounding-box colors
