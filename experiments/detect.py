@@ -4,14 +4,9 @@ from sys import platform
 import os
 import sys
 sys.path.append('../')
-
-from models import *
-from utils.datasets import *
-from utils.utils import *
-import json
-os.chdir('../')
-
-targets_path = 'utils/targets_c60.mat'
+user = os.environ.get('USER')
+import socket
+hostname = socket.gethostname()
 
 parser = argparse.ArgumentParser()
 # Get data configuration
@@ -35,9 +30,26 @@ parser.add_argument('--batch_size', type=int, default=2, help='size of the batch
 parser.add_argument('--img_size', type=int, default=32 * 51, help='size of each image dimension')
 parser.add_argument('--epochs', type=int, default=10, help='number of epochs')
 parser.add_argument('--tc', type=str, default='none', help='testcase of hardware')
+parser.add_argument('--mps_set', action='store_true', help='enable this if operating in MPS mode', default=False)
+parser.add_argument('--mps_pct', type=str, help='thread partition percentage', default='100')
+parser.add_argument('--cuda_device', type=str, help='cuda device when running mps', default='0')
 
 opt = parser.parse_args()
 print(opt)
+
+if opt.mps_set: 
+    os.environ['CUDA_MPS_ACTIVE_THREAD_PERCENTAGE'] = opt.mps_pct
+    os.environ['CUDA_MPS_LOG_DIRECTORY']=f'/scratch/{user}/mps_log/nvidia-log-{hostname}/{opt.cuda_device}'
+    os.environ['CUDA_MPS_PIPE_DIRECTORY']=f'/scratch/{user}/mps_log/nvidia-mps-{hostname}/{opt.cuda_device}'
+
+
+from models import *
+from utils.datasets import *
+from utils.utils import *
+import json
+os.chdir('../')
+
+targets_path = 'utils/targets_c60.mat'
 
 
 def detect(opt):
