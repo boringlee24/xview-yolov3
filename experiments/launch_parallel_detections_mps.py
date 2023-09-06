@@ -19,7 +19,7 @@ def launch(mps_config: str):
     for i in range(num_slices):
         cmd = f'python detect.py \
                 --epochs {args.epochs} --batch_size {args.batch_size} \
-                --tc mps_config_{mps_config}/mps_{i} --mps_set --mps_pct args.mps_config' 
+                --tc mps_config_{mps_config}/mps_{i} --mps_set --mps_pct {args.mps_config}'
         print(cmd)
         out_file = f'/scratch/li.baol/xview_logs/yolo{i}.out'
         err_file = f'/scratch/li.baol/xview_logs/yolo{i}.err'
