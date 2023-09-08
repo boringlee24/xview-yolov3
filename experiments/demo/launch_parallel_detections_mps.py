@@ -7,17 +7,29 @@ from typing import List
 FILE = Path(__file__).resolve()
 import os
 os.chdir('../')
+import zmq
 
-def launch(mps_config: str):
-
+def get_mps_config(power_limit: int):
+    if power_limit >= 245:
+        return '20'
+    elif power_limit >= 240:
+        return '25'
+    elif power_limit >= 215:
+        return '50'
+    else:
+        return 100
+    
+def launch(power_limit: int):
+    mps_config = get_mps_config(power_limit)
     Path('/scratch/li.baol/xview_logs').mkdir(parents=True, exist_ok=True)
     procs = []
-    num_slices = int(100 / int(args.mps_config))
+    num_slices = int(100 / int(mps_config))
+    producer.send_string(f'{power_limit},{num_slices}')
     for i in range(num_slices):
         new_option = '--send_zmq' if i == 0 else ''
         cmd = f'python detect_and_send.py \
                 --epochs {args.epochs} --batch_size {args.batch_size} \
-                --tc mps_config_{mps_config}/mps_{i} --mps_set --mps_pct {args.mps_config} {new_option}'
+                --tc mps_config_{mps_config}/mps_{i} --mps_set --mps_pct {mps_config} {new_option}'
         print(cmd)
         out_file = f'/scratch/li.baol/xview_logs/yolo{i}.out'
         err_file = f'/scratch/li.baol/xview_logs/yolo{i}.err'
@@ -34,9 +46,9 @@ def parse():
     # parser.add_argument('--gpuid', type=int, default=0, help='GPU ID (0 or 1)')  
     # parser.add_argument('--weights', type=str, default='yolov5x6', help='model name: yolov5s, yolov5x, yolov5x6')
     # parser.add_argument('--term', action='store_true', help='terminate services', default=False)        
-    parser.add_argument('--epochs', type=int, default=3, help='number of epochs')
+    parser.add_argument('--epochs', type=int, default=20, help='number of epochs')
     parser.add_argument('--batch_size', type=int, default=1, help='size of the batches')
-    parser.add_argument('--mps_config', type=str, default="100", help='testcase')
+    parser.add_argument('--power_limit', type=int, default=250, help='power limit in W')
     args = parser.parse_args()
     # args.imgsz *= 2 if len(args.imgsz) == 1 else 1  # expand
     print(args)
@@ -45,6 +57,9 @@ def parse():
 if __name__ == '__main__':
     args = parse()
     hostname = socket.gethostname()
-    time.sleep(5)
-    launch(args.mps_config)
+    context = zmq.Context()
+    producer = context.socket(zmq.PUSH)
+    producer.bind("tcp://0.0.0.0:5557")
+
+    launch(args.power_limit)
 
