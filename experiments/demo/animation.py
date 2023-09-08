@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
     power_meas, lat_meas = [], []
     power_limit = 250
-    num_ins = 1
+    num_ins = 0
     latency = []
     x1 = threading.Thread(target=get_power, daemon=True)
     x2 = threading.Thread(target=get_power_limit, daemon=True)
