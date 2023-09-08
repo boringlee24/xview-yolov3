@@ -73,7 +73,7 @@ def update_data(n):
     if len(lat_meas) == 0:
         throughput = 0
     else:
-        throughput = num_ins * 1000 / np.mean(lat_meas)
+        throughput = round(num_ins * 1000 / np.mean(lat_meas),4)
 
     data1 = f"Throughput: {throughput} requests/sec"
     data2 = f"Power Consumption: {pwr} Watt"
@@ -93,7 +93,6 @@ if __name__ == '__main__':
     x1 = threading.Thread(target=get_power, daemon=True)
     x2 = threading.Thread(target=get_power_limit, daemon=True)
     x3 = threading.Thread(target=get_throughput, daemon=True)
-    # TODO: x2 for throughput calculation, 5556
     x1.start()
     x2.start()
     x3.start()
