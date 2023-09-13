@@ -15,7 +15,7 @@ data2_values = []
 # Layout of the app
 app.layout = html.Div(
     [html.H1('Live Demo Dashboard'),
-     html.Div(id='live-data', children='Initial Data'),
+     html.Div(id='live-data', children='Initial Data', style={'fontSize': '24px'}),  # Increase font size here
      dcc.Interval(id='interval-component', interval=1000, n_intervals=0),
      dcc.Graph(id='live-plot1', style={'width': '80%', 'height': '300px'}),  # Adjust width and height here
      dcc.Graph(id='live-plot2', style={'width': '80%', 'height': '300px'})  # Adjust width and height here
