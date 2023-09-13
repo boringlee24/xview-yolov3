@@ -17,8 +17,8 @@ app.layout = html.Div(
     [html.H1('Live Demo Dashboard'),
      html.Div(id='live-data', children='Initial Data', style={'fontSize': '24px'}),  # Increase font size here
      dcc.Interval(id='interval-component', interval=1000, n_intervals=0),
-     dcc.Graph(id='live-plot1', style={'width': '80%', 'height': '300px'}),  # Adjust width and height here
-     dcc.Graph(id='live-plot2', style={'width': '80%', 'height': '300px'})  # Adjust width and height here
+     dcc.Graph(id='live-plot1', style={'width': '80%', 'height': '300px', 'margin-bottom': '-50px', 'padding-bottom': "-50px"}),  # Adjust width and height here
+     dcc.Graph(id='live-plot2', style={'width': '80%', 'height': '300px', 'margin-top': '-50px', 'padding-top': "-50px"})  # Adjust width and height here
     ]
 )
 
@@ -51,8 +51,10 @@ def update_data_and_plots(n):
     # Format data for display
     data1 = f"Data1: {data1_values[-1]}"  # Display the latest data point
     data2 = f"Data2: {data2_values[-1]}"  # Display the latest data point
-    
-    return html.Div([data1, html.Br(), data2]), fig1, fig2
+
+    data_div = html.Div([html.Span(data1, style={'color': 'red'}), html.Span(" | "), html.Span(data2, style={'color': 'green'})], style={'display': 'inline-block'})
+
+    return data_div, fig1, fig2
 
 if __name__ == '__main__':
     app.run_server(debug=True)

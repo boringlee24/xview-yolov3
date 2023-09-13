@@ -59,10 +59,10 @@ app = dash.Dash(__name__)
 
 app.layout = html.Div(
     [html.H1('Live Demo Dashboard'),
-     html.Div(id='live-data', children='Initial Data', style={'fontSize': '24px'}),  # Increase font size here
+     html.Div(id='live-data', children='Initial Data', style={'fontSize': '24px', 'display': 'flex'}),  # Increase font size here
      dcc.Interval(id='interval-component', interval=1000, n_intervals=0),
-     dcc.Graph(id='live-plot1', style={'width': '88%', 'height': '300px'}),  # Adjust width and height here
-     dcc.Graph(id='live-plot2', style={'width': '80%', 'height': '300px'})  # Adjust width and height here
+     dcc.Graph(id='live-plot1', style={'width': '88%', 'height': '300px', 'margin': '0'}), # Adjust width and height here
+     dcc.Graph(id='live-plot2', style={'width': '80%', 'height': '300px', 'margin': '0'})  # Adjust width and height here
     ]
 )
 
@@ -73,19 +73,22 @@ app.layout = html.Div(
     Input('interval-component', 'n_intervals')
 )
 def update_data(n):
+    global time_points, pwr_display, power_limit_display, throughput_display
+
     # global power_meas, power_limit, lat_meas
     pwr = 0 if len(power_meas) == 0 else round(np.mean(power_meas),3)
-    if len(lat_meas) == 0:
+    if len(lat_meas) == 0 and len(throughput_display) == 0:
         throughput = 0
+    elif len(lat_meas) == 0:
+        throughput = throughput_display[-1]
     else:
         throughput = round(num_ins * 1000 / np.mean(lat_meas),4)
 
-    data1 = f"Throughput: {throughput} requests/sec"
-    data2 = f"Power Consumption: {pwr} Watt"
-    data3 = f"Power Limit: {power_limit} Watt"
-    data4 = f"Number of Inference Instances: {num_ins}"
+    # data1 = f"Throughput: {throughput} requests/sec"
+    # data2 = f"Power Consumption: {pwr} Watt"
+    # data3 = f"Power Limit: {power_limit} Watt"
+    # data4 = f"Number of Inference Instances: {num_ins}"
 
-    global time_points, pwr_display, power_limit_display, throughput_display
     time_points.append(n)
     pwr_display.append(pwr)#power_meas[-1])
     power_limit_display.append(power_limit)
@@ -100,14 +103,50 @@ def update_data(n):
     # create live plots
     fig1 = px.line(x=time_points, y=[pwr_display, power_limit_display], labels={'x': 'Time', 'y': 'Power (W)'})
     fig1.update_traces(line=dict(width=3.5), selector=dict(name='wide_variable_0'), line_color='coral', name='Power Consumption')
-    fig1.update_traces(line=dict(width=3.5, dash='dash'), selector=dict(name='wide_variable_1'), line_color='darkorchid', name='Power Limit')
-    fig1.update_yaxes(title_text='Power (W)', title_font=dict(size=18))
-    fig1.update_xaxes(title_font=dict(size=18))
+    fig1.update_traces(line=dict(width=3.5, dash='dash'), selector=dict(name='wide_variable_1'), line_color='dodgerblue', name='Power Limit')
+    fig1.update_yaxes(title_text='Power (W)', title_font=dict(size=18), range=[150, 260])
+    fig1.update_xaxes(title_font=dict(size=17))
+    fig1.update_layout(title='Inference Power', title_font=dict(size=22))
+
     fig2 = px.line(x=time_points, y=throughput_display, labels={'x': 'Time', 'y': 'Throughput (RPS)'})
     fig2.update_traces(line_color='darkolivegreen', line=dict(width=3.5))
-    fig2.update_xaxes(title_font=dict(size=18))
+    fig2.update_xaxes(title_font=dict(size=17))
+    fig2.update_yaxes(title_text='Throughput (RPS)', title_font=dict(size=18), range=[3.5, 7.5])
+    fig2.update_layout(title='Inference Throughput', title_font=dict(size=22))
 
-    return html.Div([data3, html.Br(), data2, html.Br(), data1, html.Br(), data4]), fig1, fig2  # Use html.Div to format the content with line breaks
+    box_style = {'border': '5px solid #ccc', 'padding': '5px', 'margin-right': '10px', 'width': '240px', 'height': '80px'}
+    text_style = {'font-size': '20px', 'text-align': 'center'}
+    subtext_style = {'fontSize': '19px', 'color': 'red', 'text-align': 'center', 'margin-top': '-20px'}
+    # Create two boxes for data display
+    from copy import deepcopy
+    
+    new_style = deepcopy(subtext_style)
+    new_style['color'] = 'coral'
+    data_box1 = html.Div([
+        html.Div([html.H3('Power Consumption', style=text_style), html.P(f'{pwr} Watt', style=new_style)]),
+    ], style=box_style)
+
+    new_style = deepcopy(subtext_style)
+    new_style['color'] = 'dodgerblue'
+    data_box2 = html.Div([
+        html.Div([html.H3('Power Limit', style=text_style), html.P(f'{power_limit} Watt', style=new_style)]),
+    ], style=box_style)
+
+    new_style = deepcopy(subtext_style)
+    new_style['color'] = 'darkolivegreen'
+    data_box3 = html.Div([
+        html.Div([html.H3('Throughput', style=text_style), html.P(f'{throughput} Requests/Sec', style=new_style)]),
+    ], style=box_style)
+
+    new_style = deepcopy(subtext_style)
+    new_style['color'] = 'black'
+    data_box4 = html.Div([
+        html.Div([html.H3('Number of Instances', style=text_style), html.P(f'{num_ins}', style=new_style)]),
+    ], style=box_style)
+
+    return [data_box1, data_box2, data_box3, data_box4], fig1, fig2
+
+    # return html.Div([data3, html.Br(), data2, html.Br(), data1, html.Br(), data4]), fig1, fig2  # Use html.Div to format the content with line breaks
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Demo")
@@ -117,7 +156,7 @@ if __name__ == '__main__':
     power_meas, lat_meas = [], []
     power_limit = 250
     num_ins = 0
-    history_limit = 30
+    history_limit = 60
     time_points, pwr_display, power_limit_display, throughput_display = [], [], [], []
 
     x1 = threading.Thread(target=get_power, daemon=True)
