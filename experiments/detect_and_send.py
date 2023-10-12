@@ -124,7 +124,8 @@ def detect(opt):
                         if len(pred) > 0:
                             pred[:, 0] += x1
                             pred[:, 1] += y1
-                            preds.append(pred.unsqueeze(0))
+                            pred = pred.unsqueeze(0)
+                            # preds.append(pred.unsqueeze(0))
 
     #        print('Batch %d... (Done %.3fs)' % (batch_i, time.time() - prev_time))
             t_end = time.time()
