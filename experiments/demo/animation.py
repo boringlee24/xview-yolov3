@@ -162,7 +162,7 @@ def update_data(n):
     ], style=box_style)
 
     new_style = deepcopy(subtext_style)
-    new_style['color'] = 'black'
+    new_style['color'] = 'goldenrod'
     data_box5 = html.Div([
         html.Div([html.H3('Temperature', style=text_style), html.P(f'{temp} degC', style=new_style)]),
     ], style=box_style)
