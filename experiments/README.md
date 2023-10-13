@@ -42,5 +42,6 @@ python launch_parallel_detections_mps.py --power_limit 200
 python launch_parallel_detections_mps.py --power_limit 230
 python launch_parallel_detections_mps.py --power_limit 240
 python launch_parallel_detections_mps.py --power_limit 250
+python launch_parallel_detections_mps.py --power_limit 250 --disable
 ```
 
